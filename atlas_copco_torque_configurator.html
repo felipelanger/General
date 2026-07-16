@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Copco | Configurador de Torque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ac-blue:#0099CC;
+    --ac-blue-dark:#0B2E4F;
+    --ac-teal:#054E5A;
+    --ac-beige:#E1B77E;
+    --ac-gray:#A1A9B4;
+    --ac-gray-light:#F2F3F5;
+    --ac-white:#FFFFFF;
+    --ac-ink:#152430;
+    --ac-danger:#C0392B;
+    --ac-ok:#1F8A5B;
+    --radius:14px;
+    --shadow: 0 10px 30px rgba(11,46,79,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,#E9EEF1 0%, #DCE3E8 100%);
+    font-family:'Inter',sans-serif;
+    color:var(--ac-ink);
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px 12px;
+  }
+  .phone{
+    width:100%;
+    max-width:400px;
+    background:var(--ac-white);
+    border-radius:28px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    min-height:780px;
+    display:flex;
+    flex-direction:column;
+    border:1px solid #ccd5db;
+  }
+
+  /* ---------- HEADER / BRAND ---------- */
+  .brandbar{
+    background:var(--ac-blue-dark);
+    padding:18px 20px 16px;
+    color:var(--ac-white);
+    position:relative;
+    overflow:hidden;
+  }
+  .brandbar::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-40px;
+    width:140px;height:140px;
+    background:var(--ac-blue);
+    opacity:.25;
+    border-radius:50%;
+  }
+  .logo-row{display:flex;align-items:center;gap:10px;position:relative;z-index:2;}
+  .logo-mark{
+    width:34px;height:34px;
+    border-radius:8px;
+    background:var(--ac-blue);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    color:var(--ac-blue-dark);
+    flex-shrink:0;
+  }
+  .wordmark{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:0.5px;
+    line-height:1;
+  }
+  .wordmark span{color:var(--ac-blue);}
+  .brand-sub{
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#9FC4D6;
+    margin-top:2px;
+  }
+  .screen-title{
+    font-family:'Oswald',sans-serif;
+    font-size:22px;
+    font-weight:600;
+    margin-top:16px;
+    position:relative;
+    z-index:2;
+  }
+  .screen-desc{
+    font-size:12.5px;
+    color:#B9CBD6;
+    margin-top:4px;
+    max-width:280px;
+    position:relative;
+    z-index:2;
+  }
+
+  /* ---------- BODY ---------- */
+  .body{
+    flex:1;
+    padding:22px 20px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  /* Torque dial (signature element) */
+  .dial-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+  }
+  .dial-label{
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--ac-gray);
+    font-weight:600;
+  }
+  svg#dial{ overflow:visible; }
+  .dial-value{
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:34px;
+    fill:var(--ac-blue-dark);
+  }
+  .dial-unit{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    fill:var(--ac-gray);
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .field label{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    color:var(--ac-blue-dark);
+  }
+  .torque-input-row{
+    display:flex;
+    align-items:center;
+    background:var(--ac-gray-light);
+    border:1.5px solid #DDE3E7;
+    border-radius:var(--radius);
+    padding:4px 6px;
+    transition:border-color .15s;
+  }
+  .torque-input-row:focus-within{ border-color:var(--ac-blue); }
+  .torque-input-row input[type=number]{
+    flex:1;
+    border:none;
+    background:transparent;
+    outline:none;
+    font-family:'Roboto Mono',monospace;
+    font-size:20px;
+    font-weight:700;
+    color:var(--ac-ink);
+    padding:10px 8px;
+    width:100%;
+    -moz-appearance:textfield;
+  }
+  .torque-input-row input::-webkit-outer-spin-button,
+  .torque-input-row input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .unit-pill{
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+    font-weight:700;
+    color:var(--ac-white);
+    background:var(--ac-blue);
+    padding:6px 10px;
+    border-radius:8px;
+    letter-spacing:0.5px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:4px;
+    background:#DDE3E7;
+    margin-top:2px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--ac-blue);
+    border:3px solid var(--ac-white);
+    box-shadow:0 1px 4px rgba(0,0,0,.3);
+    cursor:pointer;
+    margin-top:-7px;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:4px;border-radius:4px;background:#DDE3E7;
+  }
+
+  /* Segmented control - power type */
+  .segmented{
+    display:flex;
+    background:var(--ac-gray-light);
+    border-radius:var(--radius);
+    padding:5px;
+    gap:5px;
+    border:1.5px solid #DDE3E7;
+  }
+  .seg-btn{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    padding:12px 6px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    background:transparent;
+    border:none;
+    font-family:'Inter',sans-serif;
+    color:var(--ac-blue-dark);
+    transition:all .15s;
+  }
+  .seg-btn svg{ width:26px;height:26px; }
+  .seg-btn .seg-name{ font-size:12.5px; font-weight:700; }
+  .seg-btn .seg-tag{ font-size:9.5px; color:var(--ac-gray); letter-spacing:.5px; text-transform:uppercase;}
+  .seg-btn.active{
+    background:var(--ac-blue-dark);
+    color:var(--ac-white);
+  }
+  .seg-btn.active .seg-tag{ color:#9FC4D6; }
+  .seg-btn.active svg{ fill:var(--ac-white) !important; stroke:var(--ac-white) !important; }
+
+  /* CTA */
+  .cta{
+    margin-top:4px;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:var(--radius);
+    background:var(--ac-blue);
+    color:var(--ac-blue-dark);
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:16px;
+    letter-spacing:0.5px;
+    cursor:pointer;
+    box-shadow:0 8px 18px rgba(0,153,204,0.35);
+    transition:transform .1s ease;
+  }
+  .cta:active{ transform:scale(0.98); }
+  .cta:disabled{
+    background:#D9DEE2;
+    color:#9AA6AC;
+    box-shadow:none;
+    cursor:not-allowed;
+  }
+
+  .hint{
+    font-size:11px;
+    color:var(--ac-gray);
+    text-align:center;
+  }
+  .hint.err{ color:var(--ac-danger); font-weight:600; }
+
+  /* ---------- RESULT PANEL ---------- */
+  .result{
+    display:none;
+    flex-direction:column;
+    gap:14px;
+    animation:slideUp .35s ease;
+  }
+  .result.show{ display:flex; }
+  @keyframes slideUp{
+    from{ opacity:0; transform:translateY(16px);}
+    to{ opacity:1; transform:translateY(0);}
+  }
+  .result-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .result-head h3{
+    font-family:'Oswald',sans-serif;
+    font-size:16px;
+    margin:0;
+    color:var(--ac-blue-dark);
+  }
+  .status-chip{
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    background:#E5F5EC;
+    color:var(--ac-ok);
+    padding:5px 10px;
+    border-radius:999px;
+  }
+  .tool-card{
+    background:var(--ac-blue-dark);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    color:var(--ac-white);
+    position:relative;
+    overflow:hidden;
+  }
+  .tool-card::before{
+    content:"";
+    position:absolute; right:-30px; bottom:-30px;
+    width:110px;height:110px;
+    background:var(--ac-blue);
+    opacity:.2;
+    border-radius:50%;
+  }
+  .tool-card .tool-model{
+    font-family:'Oswald',sans-serif;
+    font-size:19px;
+    font-weight:600;
+    position:relative; z-index:1;
+  }
+  .tool-card .tool-desc{
+    font-size:12px;
+    color:#B9CBD6;
+    margin-top:3px;
+    position:relative; z-index:1;
+  }
+
+  .spec-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .spec{
+    background:var(--ac-gray-light);
+    border-radius:10px;
+    padding:12px 12px 10px;
+    border:1px solid #E2E7EA;
+  }
+  .spec .k{
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    color:var(--ac-gray);
+    font-weight:700;
+  }
+  .spec .v{
+    font-family:'Roboto Mono',monospace;
+    font-size:15px;
+    font-weight:700;
+    color:var(--ac-ink);
+    margin-top:3px;
+  }
+  .note{
+    background:#FBF3E5;
+    border:1px solid var(--ac-beige);
+    border-radius:10px;
+    padding:11px 13px;
+    font-size:12px;
+    color:#6B4E1F;
+    line-height:1.45;
+  }
+  .note b{ color:#4E3712; }
+
+  .reset-btn{
+    width:100%;
+    padding:13px;
+    border-radius:var(--radius);
+    background:transparent;
+    border:1.5px solid var(--ac-blue-dark);
+    color:var(--ac-blue-dark);
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+  }
+
+  .footer-note{
+    text-align:center;
+    font-size:10px;
+    color:var(--ac-gray);
+    padding:10px 20px 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="brandbar">
+    <div class="logo-row">
+      <div class="logo-mark">AC</div>
+      <div>
+        <div class="wordmark">Atlas <span>Copco</span></div>
+        <div class="brand-sub">Assembly Solutions</div>
+      </div>
+    </div>
+    <div class="screen-title">Configurador de Torque</div>
+    <div class="screen-desc">Informe o torque exigido pela aplicação e o tipo de ferramenta para obter os parâmetros de configuração.</div>
+  </div>
+
+  <div class="body">
+
+    <!-- INPUT FORM -->
+    <div id="formView">
+      <div class="dial-wrap">
+        <div class="dial-label">Torque alvo</div>
+        <svg id="dial" width="180" height="110" viewBox="0 0 180 110">
+          <path id="dialTrack" d="M15,100 A75,75 0 0 1 165,100" fill="none" stroke="#DDE3E7" stroke-width="12" stroke-linecap="round"/>
+          <path id="dialFill" d="M15,100 A75,75 0 0 1 165,100" fill="none" stroke="#0099CC" stroke-width="12" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="235.6"/>
+          <text x="90" y="80" text-anchor="middle" class="dial-value" id="dialValue">0.0</text>
+          <text x="90" y="98" text-anchor="middle" class="dial-unit">Nm</text>
+        </svg>
+      </div>
+
+      <div class="field" style="margin-top:6px;">
+        <label for="torqueNum">Torque necessário (Nm)</label>
+        <div class="torque-input-row">
+          <input type="number" id="torqueNum" placeholder="Ex: 12.5" step="0.1" min="0" max="400">
+          <span class="unit-pill">Nm</span>
+        </div>
+        <input type="range" id="torqueRange" min="0" max="400" step="0.5" value="0">
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label>Tipo de ferramenta</label>
+        <div class="segmented" id="powerToggle">
+          <button type="button" class="seg-btn active" data-type="battery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0B2E4F" stroke-width="2"><rect x="7" y="2" width="10" height="4" rx="1"/><rect x="5" y="6" width="14" height="16" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+            <span class="seg-name">A Bateria</span>
+            <span class="seg-tag">Cordless</span>
+          </button>
+          <button type="button" class="seg-btn" data-type="corded">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0B2E4F" stroke-width="2"><circle cx="12" cy="10" r="6"/><path d="M12 16v3M8 22h8M9 10l2 2 4-4"/></svg>
+            <span class="seg-name">Com Cabo</span>
+            <span class="seg-tag">Corded</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="cta" id="generateBtn" style="margin-top:24px;" disabled>Gerar Configuração</button>
+      <div class="hint" id="formHint">Informe um torque entre 0.5 e 400 Nm</div>
+    </div>
+
+    <!-- RESULT VIEW -->
+    <div class="result" id="resultView">
+      <div class="result-head">
+        <h3>Configuração recomendada</h3>
+        <span class="status-chip">Pronto para uso</span>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-model" id="resModel">—</div>
+        <div class="tool-desc" id="resDesc">—</div>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec"><div class="k">Torque alvo</div><div class="v" id="resTorqueTarget">—</div></div>
+        <div class="spec"><div class="k">Faixa de ajuste</div><div class="v" id="resTorqueRange">—</div></div>
+        <div class="spec"><div class="k">Velocidade</div><div class="v" id="resSpeed">—</div></div>
+        <div class="spec"><div class="k">Modo de aperto</div><div class="v" id="resMode">—</div></div>
+        <div class="spec"><div class="k">Bocal / Bit</div><div class="v" id="resSocket">—</div></div>
+        <div class="spec"><div class="k">Etapas (Multi-step)</div><div class="v" id="resSteps">—</div></div>
+      </div>
+
+      <div class="note"><b>Nota do operador:</b> <span id="resNote">—</span></div>
+
+      <button class="reset-btn" id="resetBtn">Nova Configuração</button>
+    </div>
+
+  </div>
+
+  <div class="footer-note">Protótipo interno · Atlas Copco Torque Configurator</div>
+</div>
+
+<script>
+  const torqueNum = document.getElementById('torqueNum');
+  const torqueRange = document.getElementById('torqueRange');
+  const dialFill = document.getElementById('dialFill');
+  const dialValue = document.getElementById('dialValue');
+  const generateBtn = document.getElementById('generateBtn');
+  const formHint = document.getElementById('formHint');
+  const powerToggle = document.getElementById('powerToggle');
+  const formView = document.getElementById('formView');
+  const resultView = document.getElementById('resultView');
+  const resetBtn = document.getElementById('resetBtn');
+
+  const DIAL_LEN = 235.6;
+  const MAX_T = 400;
+  let powerType = 'battery';
+
+  function syncFromNumber(){
+    let v = parseFloat(torqueNum.value);
+    if(isNaN(v)) v = 0;
+    torqueRange.value = Math.min(v, MAX_T);
+    updateDial(v);
+    validate(v);
+  }
+  function syncFromRange(){
+    torqueNum.value = torqueRange.value;
+    updateDial(parseFloat(torqueRange.value));
+    validate(parseFloat(torqueRange.value));
+  }
+  function updateDial(v){
+    const clamped = Math.max(0, Math.min(v, MAX_T));
+    const ratio = clamped / MAX_T;
+    dialFill.setAttribute('stroke-dashoffset', DIAL_LEN - (DIAL_LEN * ratio));
+    dialValue.textContent = clamped ? clamped.toFixed(1) : '0.0';
+  }
+  function validate(v){
+    if(v && v >= 0.5 && v <= 400){
+      generateBtn.disabled = false;
+      formHint.textContent = 'Informe um torque entre 0.5 e 400 Nm';
+      formHint.classList.remove('err');
+    } else {
+      generateBtn.disabled = true;
+      formHint.textContent = v > 400 ? 'Valor acima do limite de aplicações manuais (400 Nm)' : 'Informe um torque entre 0.5 e 400 Nm';
+      formHint.classList.toggle('err', v > 400);
+    }
+  }
+
+  torqueNum.addEventListener('input', syncFromNumber);
+  torqueRange.addEventListener('input', syncFromRange);
+
+  powerToggle.querySelectorAll('.seg-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      powerToggle.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      powerType = btn.dataset.type;
+    });
+  });
+
+  // ---- Torque band lookup tables ----
+  const BATTERY_BANDS = [
+    {max:3,   model:'Atlas Copco EAM 3-BC', desc:'Aparafusadora a bateria de precisão', speed:'0–850 rpm', socket:'Bit hex 1/4"', steps:'2 (aproximação + aperto final)', note:'Ideal para conectores eletrônicos e plásticos sensíveis a sobre-torque.'},
+    {max:8,   model:'Atlas Copco EAM 8-BC', desc:'Aparafusadora a bateria compacta', speed:'0–650 rpm', socket:'Bit hex 1/4"', steps:'2 (aproximação + aperto final)', note:'Utilizar modo Torque puro para fixações não críticas.'},
+    {max:20,  model:'Atlas Copco EAM 20-BC', desc:'Parafusadeira a bateria de bancada', speed:'0–450 rpm', socket:'Soquete 3/8" hex', steps:'3 (aproximação + pré-aperto + aperto final)', note:'Recomenda-se controle Torque + Ângulo em fixações estruturais.'},
+    {max:50,  model:'Atlas Copco EAM 50-BC', desc:'Nutrunner a bateria de média capacidade', speed:'0–320 rpm', socket:'Soquete 1/2" hex', steps:'3 (aproximação + pré-aperto + aperto final)', note:'Verificar carga da bateria acima de 80% para garantir repetibilidade.'},
+    {max:100, model:'Atlas Copco EAM 100-BC', desc:'Nutrunner a bateria de alto torque', speed:'0–180 rpm', socket:'Soquete 3/4" hex', steps:'4 (aproximação + pré-aperto + espera + aperto final)', note:'Recomenda-se fixação com suporte de reação (torque arm).'},
+    {max:400, model:'Atlas Copco EAM 250-BC', desc:'Nutrunner a bateria industrial pesado', speed:'0–120 rpm', socket:'Soquete 1" hex', steps:'4 (aproximação + pré-aperto + espera + aperto final)', note:'Uso obrigatório de braço de reação e dupla checagem de calibração.'}
+  ];
+
+  const CORDED_BANDS = [
+    {max:3,   model:'Atlas Copco ETD ST31', desc:'Aparafusadora elétrica com cabo, controle de precisão', speed:'0–900 rpm', socket:'Bit hex 1/4"', steps:'2 (aproximação + aperto final)', note:'Curva de torque estável, indicada para linhas de alto ciclo.'},
+    {max:8,   model:'Atlas Copco ETD ST41', desc:'Aparafusadora elétrica com cabo compacta', speed:'0–700 rpm', socket:'Bit hex 1/4"', steps:'2 (aproximação + aperto final)', note:'Configurar limite de corrente para evitar sobre-torque em plástico.'},
+    {max:20,  model:'Atlas Copco ETV ST61', desc:'Parafusadeira elétrica com cabo de bancada', speed:'0–500 rpm', socket:'Soquete 3/8" hex', steps:'3 (aproximação + pré-aperto + aperto final)', note:'Modo Torque + Ângulo recomendado para juntas rígidas.'},
+    {max:50,  model:'Atlas Copco ETV ST81', desc:'Nutrunner elétrico com cabo de média capacidade', speed:'0–350 rpm', socket:'Soquete 1/2" hex', steps:'3 (aproximação + pré-aperto + aperto final)', note:'Cabo deve ser inspecionado antes de aplicações contínuas.'},
+    {max:100, model:'Atlas Copco ETP ST121', desc:'Nutrunner elétrico com cabo de alto torque', speed:'0–200 rpm', socket:'Soquete 3/4" hex', steps:'4 (aproximação + pré-aperto + espera + aperto final)', note:'Utilizar braço de reação; monitorar temperatura em ciclos longos.'},
+    {max:400, model:'Atlas Copco ETP ST300', desc:'Nutrunner elétrico com cabo industrial pesado', speed:'0–110 rpm', socket:'Soquete 1" hex', steps:'4 (aproximação + pré-aperto + espera + aperto final)', note:'Uso obrigatório de braço de reação e checagem de calibração dupla.'}
+  ];
+
+  function pickBand(v, type){
+    const table = type === 'battery' ? BATTERY_BANDS : CORDED_BANDS;
+    return table.find(b => v <= b.max) || table[table.length-1];
+  }
+
+  function fmtRange(v){
+    const low = (v*0.9).toFixed(1);
+    const high = (v*1.1).toFixed(1);
+    return low + '–' + high + ' Nm';
+  }
+
+  generateBtn.addEventListener('click', ()=>{
+    const v = parseFloat(torqueNum.value);
+    if(!v || v < 0.5 || v > 400) return;
+    const band = pickBand(v, powerType);
+
+    document.getElementById('resModel').textContent = band.model;
+    document.getElementById('resDesc').textContent = band.desc;
+    document.getElementById('resTorqueTarget').textContent = v.toFixed(1) + ' Nm';
+    document.getElementById('resTorqueRange').textContent = fmtRange(v);
+    document.getElementById('resSpeed').textContent = band.speed;
+    document.getElementById('resMode').textContent = v <= 8 ? 'Torque puro' : 'Torque + Ângulo';
+    document.getElementById('resSocket').textContent = band.socket;
+    document.getElementById('resSteps').textContent = band.steps;
+    document.getElementById('resNote').textContent = band.note;
+
+    formView.style.display = 'none';
+    resultView.classList.add('show');
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    resultView.classList.remove('show');
+    formView.style.display = 'block';
+    torqueNum.value = '';
+    torqueRange.value = 0;
+    updateDial(0);
+    validate(0);
+  });
+
+  updateDial(0);
+</script>
+
+</body>
+</html>
